@@ -7,7 +7,6 @@ const APP_FILES = [
   "./",
   "index.html",
   "manifest.json",
-  "css/style.css",
   "js/utils.js",
   "js/store.js",
   "js/reminders.js",
@@ -15,10 +14,10 @@ const APP_FILES = [
   "js/notes.js",
   "js/projects.js",
   "js/settings.js",
-  "js/main.js",
-  "icons/icon.svg",
-  "icons/icon-192.png",
   "icons/icon-512.png"
+  "./icon.svg",
+"./style.css",
+"./main.js"
 ];
 
 // Save all app files when the service worker is installed
