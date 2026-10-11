@@ -1,26 +1,26 @@
-/* sw.js - service worker: makes the app work offline and shows notifications */
 
-// Change this number whenever you update the app files, so phones fetch the new version
-const CACHE_NAME = "focuslist-v1";
+/* sw.js - FocusList service worker */
+
+const CACHE_NAME = "focuslist-v2";
 
 const APP_FILES = [
   "./",
-  "index.html",
-  "manifest.json",
-  "js/utils.js",
-  "js/store.js",
-  "js/reminders.js",
-  "js/tasks.js",
-  "js/notes.js",
-  "js/projects.js",
-  "js/settings.js",
-  "icons/icon-512.png"
+  "./index.html",
+  "./manifest.json",
+  "./style.css",
+  "./utils.js",
+  "./store.js",
+  "./reminders.js",
+  "./tasks.js",
+  "./notes.js",
+  "./projects.js",
+  "./settings.js",
+  "./main.js",
   "./icon.svg",
-"./style.css",
-"./main.js"
+  "./icon-maskable-512.png"
 ];
 
-// Save all app files when the service worker is installed
+// Cache app files during installation
 self.addEventListener("install", (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME)
@@ -29,38 +29,57 @@ self.addEventListener("install", (event) => {
   );
 });
 
-// Remove old caches
+// Remove older caches
 self.addEventListener("activate", (event) => {
   event.waitUntil(
     caches.keys()
-      .then((names) => Promise.all(names.filter((n) => n !== CACHE_NAME).map((n) => caches.delete(n))))
+      .then((names) =>
+        Promise.all(
+          names
+            .filter((name) => name.startsWith("focuslist-") && name !== CACHE_NAME)
+            .map((name) => caches.delete(name))
+        )
+      )
       .then(() => self.clients.claim())
   );
 });
 
-// Network first (always fresh when online), cache when offline
+// Network first, cache fallback for offline use
 self.addEventListener("fetch", (event) => {
   if (event.request.method !== "GET") return;
 
   event.respondWith(
     fetch(event.request)
       .then((response) => {
-        const copy = response.clone();
-        caches.open(CACHE_NAME).then((cache) => cache.put(event.request, copy));
+        if (response.ok) {
+          const copy = response.clone();
+          caches.open(CACHE_NAME)
+            .then((cache) => cache.put(event.request, copy));
+        }
         return response;
       })
-      .catch(() => caches.match(event.request).then((cached) => cached || caches.match("index.html")))
+      .catch(async () => {
+        const cached = await caches.match(event.request);
+        if (cached) return cached;
+
+        return caches.match("./index.html");
+      })
   );
 });
 
-// Tapping a notification opens (or focuses) the app
+// Open or focus FocusList when a notification is tapped
 self.addEventListener("notificationclick", (event) => {
   event.notification.close();
+
   event.waitUntil(
-    self.clients.matchAll({ type: "window", includeUncontrolled: true }).then((windows) => {
+    self.clients.matchAll({
+      type: "window",
+      includeUncontrolled: true
+    }).then((windows) => {
       for (const client of windows) {
         if ("focus" in client) return client.focus();
       }
+
       return self.clients.openWindow("./index.html");
     })
   );
