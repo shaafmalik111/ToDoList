@@ -9,7 +9,7 @@ const NAV = [
   { id: "settings", label: "Settings", icon: "sliders" }
 ];
 
-// ---------- Theme (dark / light) ----------
+// ---------- Theme (dark / light) ---------
 const Theme = {
   apply() {
     const theme = Store.data.settings.theme;
