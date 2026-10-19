@@ -5,7 +5,7 @@ const Notes = {
   saveTimer: null,
 
   init() {
-    // Remember the selection inside the editor, and highlight active toolbar buttons
+    // Remember the selection inside the editor, and highlight active toolbar button
     document.addEventListener("selectionchange", () => {
       const editor = $("#editor");
       if (!editor) return;
