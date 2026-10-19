@@ -36,7 +36,21 @@ const Store = {
       if (!Array.isArray(this.data[name])) this.data[name] = [];
     });
 
+    this.ensureSalah();
     if (!this.data.seeded) this.seed();
+  },
+
+  // Salah data is added to old saves safely: nothing existing is touched
+  ensureSalah() {
+    const times = { fajr: "05:00", dhuhr: "13:00", asr: "16:30", maghrib: "18:30", isha: "20:30", quran: "21:30" };
+    let s = this.data.salah;
+    if (!s || typeof s !== "object" || Array.isArray(s)) s = this.data.salah = {};
+    if (!s.log || typeof s.log !== "object" || Array.isArray(s.log)) s.log = {};      // log["2026-10-19"] = { fajr: true, ... }
+    if (!s.reminders || typeof s.reminders !== "object") s.reminders = {};
+    Object.keys(times).forEach((id) => {
+      const r = s.reminders[id] || {};
+      s.reminders[id] = { on: r.on === true, time: /^\d\d:\d\d$/.test(r.time) ? r.time : times[id], last: r.last || "" };
+    });
   },
 
   save() {

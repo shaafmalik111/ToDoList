@@ -47,8 +47,8 @@ const Reminders = {
 
     const options = {
       body: body,
-      icon: "icons/icon-192.png",
-      badge: "icons/icon-192.png",
+      icon: "./icon-192.png",
+      badge: "./icon-192.png",
       vibrate: [120, 60, 120]
     };
 
@@ -69,6 +69,7 @@ const Reminders = {
 
   // Looks for tasks whose time has come
   check() {
+    if (typeof Salah !== "undefined") Salah.checkReminders();
     if (!this.enabled()) return;
 
     const now = Date.now();

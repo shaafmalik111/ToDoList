@@ -1,7 +1,7 @@
 
-/* sw.js - FocusList service worker */
+/* sw.js - SalahSync service worker */
 
-const CACHE_NAME = "focuslist-v2";
+const CACHE_NAME = "salahsync-v3";
 
 const APP_FILES = [
   "./",
@@ -16,6 +16,9 @@ const APP_FILES = [
   "./projects.js",
   "./settings.js",
   "./main.js",
+  "./salah.js",
+  "./icon-192.png",
+  "./icon-512.png",
   "./icon.svg",
   "./icon-maskable-512.png"
 ];
@@ -36,7 +39,7 @@ self.addEventListener("activate", (event) => {
       .then((names) =>
         Promise.all(
           names
-            .filter((name) => name.startsWith("focuslist-") && name !== CACHE_NAME)
+            .filter((name) => (name.startsWith("focuslist-") || name.startsWith("salahsync-")) && name !== CACHE_NAME)
             .map((name) => caches.delete(name))
         )
       )
@@ -67,7 +70,7 @@ self.addEventListener("fetch", (event) => {
   );
 });
 
-// Open or focus FocusList when a notification is tapped
+// Open or focus SalahSync when a notification is tapped
 self.addEventListener("notificationclick", (event) => {
   event.notification.close();
 

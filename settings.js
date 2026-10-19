@@ -104,8 +104,8 @@ const Settings = {
 
   async share() {
     const shareData = {
-      title: "FocusList",
-      text: "Tasks, reminders, notes and projects in one app.",
+      title: "SalahSync",
+      text: "Salah & Quran tracker, tasks, notes and projects in one app.",
       url: location.href.split("#")[0]
     };
     try {
@@ -123,7 +123,7 @@ const Settings = {
   exportData() {
     Notes.flush();
     const stamp = new Date().toISOString().slice(0, 10);
-    downloadFile("focuslist-backup-" + stamp + ".json", JSON.stringify(Store.data, null, 2), "application/json");
+    downloadFile("salahsync-backup-" + stamp + ".json", JSON.stringify(Store.data, null, 2), "application/json");
     toast("Backup downloaded.", "ok");
   },
 
@@ -152,7 +152,7 @@ const Settings = {
   },
 
   reset() {
-    confirmSheet("All tasks, notes and projects will be deleted from this device.", "Delete everything", function () {
+    confirmSheet("All tasks, notes, projects and prayer records will be deleted from this device.", "Delete everything", function () {
       localStorage.removeItem(Store.KEY);
       Store.load();       // starts again with the example data
       Theme.apply();
